@@ -4,6 +4,13 @@
 # Provides utilities and data preprocessing on the KITTI dataset for 231N Final
 # Project. Transforms data from KITTI CSV labels and monocular images to VOC
 # format, and from VOC to COCO.
+#
+# Baseline requirement before running (if you don't want to modify args):
+# Create a kitti folder, coco folder and voc folder inside datasets
+# create a folder called 'training' inside kitti
+# place image_2 and label_2 folders inside of 'training'
+# run the script as python3 utils.py --r t
+#
 # Jason Zheng
 # 5/15/20
 # ============================================================================ #
