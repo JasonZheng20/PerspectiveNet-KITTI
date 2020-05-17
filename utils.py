@@ -16,7 +16,8 @@ from math import ceil, floor
 from numpy.random import choice
 from os import listdir
 from os.path import isfile, join
-from umautobots_converter.main import main as convert
+from umautobots_converter.main import main as convert_kitti_to_voc
+from voc_coco_converter import functional_conversion as convert_voc_to_coco
 
 # ============================================================================ #
 def partition_kitti_datasets():
@@ -85,7 +86,7 @@ def to_voc():
     for split in ['train', 'val', 'test']:
         print('Converting %s split from kitti to voc ...' % split)
         convertInitialTime = time.time()
-        convert(
+        convert_kitti_to_voc(
             from_path=args.kitti_dataset_path,
             from_key='kitti',
             to_path=args.voc_dataset_path,
@@ -101,7 +102,23 @@ def to_coco():
     @returns: []
     Converts the dataset from VOC Format to COCO Format
     """
-    pass
+    initialTime = time.time()
+    create_label_list()
+    # Run conversion for each partition from VOC to COCO
+    for split in ['train', 'val', 'test']:
+        print('Converting %s split from voc to coco ...' % split)
+        convertInitialTime = time.time()
+
+        # Conversion script provided by yukkyo: https://github.com/yukkyo/voc2coco
+        convert_voc_to_coco(
+            annotation_dir=join(args.voc_dataset_path,'VOC2012/Annotations/'),
+            annotation_id=join(args.voc_dataset_path,'VOC2012/ImageSets/Main/%sval.txt' % (split)),
+            ext='xml',
+            output_path=join(args.coco_dataset_path,'%s.json'%(split)),
+            label_path=join(args.voc_dataset_path,'VOC2012/labels.txt')
+        )
+        print('Converted %s split in %2f s' % (split, time.time()-convertInitialTime))
+    print('Completed voc to kitti conversion in %2f s' % (time.time()-initialTime))
 
 def validate_splits():
     """
@@ -114,6 +131,27 @@ def validate_splits():
         print('Could not find a valid split in the provided KITTI dataset directory')
         return False
     return True
+
+def create_label_list():
+    """
+    @params: []
+    @returns: []
+    Here for convenience because I'm not sure which labels belong in the label list
+    """
+    label_list = [
+        'person',
+        'Person_sitting',
+        'car',
+        'Cyclist',
+        'DontCare',
+        'Truck',
+        'Misc',
+        'Van',
+        'Tram'
+    ]
+    with open(join(args.voc_dataset_path,"VOC2012/labels.txt"), "w") as label_file:
+        for label in label_list:
+            label_file.write("%s\n"%label)
 
 
 # ============================================================================ #
