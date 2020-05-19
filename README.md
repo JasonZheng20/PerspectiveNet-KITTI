@@ -1,6 +1,7 @@
 # PerspectiveNet-KITTI
 
 ## This code runs converts KITTI dataset into a format that is ready for processing by [detectron2](https://github.com/facebookresearch/detectron2)
+The pipeline converts the dataset format from KITTI -> VOC -> COCO
 
 ### The instructions are as follows:
 
