@@ -20,7 +20,7 @@ import time
 import torch
 
 from math import ceil, floor
-from numpy.random import choice
+from numpy.random import choice, seed
 from os import listdir
 from os.path import isfile, join
 from umautobots_converter.main import main as convert_kitti_to_voc
@@ -179,6 +179,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+    torch.manual_seed(0)
+    seed(0)
 
     if args.r == 'p' or args.r == 't':
         train, val, test = partition_kitti_datasets()
